@@ -1,26 +1,51 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  /* Gemini Aesthetic Palette */
+  --bg-app: #ffffff;
+  --bg-sidebar: #f0f4f9;
+  --bg-user-bubble: #f0f4f9;
+  --bg-input: #ffffff;
+  --text-primary: #1f1f1f;
+  --text-secondary: #444746;
+  --accent: #0b57d0;
+  --accent-hover: #0842a0;
+  --border-subtle: #e7ebf0;
+  
+  /* Utility */
+  --radius-lg: 1.5rem;
+  --radius-md: 1rem;
+  --radius-sm: 0.5rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg-app: #131314;
+    --bg-sidebar: #1e1f20;
+    --bg-user-bubble: #282a2c;
+    --bg-input: #1e1f20;
+    --text-primary: #e3e3e3;
+    --text-secondary: #c4c7c5;
+    --accent: #a8c7fa;
+    --accent-hover: #8ab4f8;
+    --border-subtle: #444746;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+}
+
+/* Scrollbar refinement for sidebar */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
