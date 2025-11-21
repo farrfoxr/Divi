@@ -53,10 +53,12 @@ export default function MainCanvas({ activeRootId, activeNodeId, setActiveNodeId
 
   return (
     <main className="flex h-screen flex-1 flex-col bg-[var(--bg-app)]">
-      {/* Header */}
-      <header className="flex h-16 items-center justify-between border-b border-[var(--border-subtle)] px-8">
-        <h1 className="text-lg font-medium text-[var(--text-primary)]">{activeNode.title}</h1>
-        <div className="text-xs text-[var(--text-secondary)]">Depth: {activeNode.depth}</div>
+      {/* Task 3: Polished Header */}
+      <header className="flex h-16 items-center justify-center px-8 relative">
+        <h1 className="text-lg font-medium text-[var(--text-primary)]">
+          {activeNode.title}
+        </h1>
+        {/* Depth removed from here */}
       </header>
 
       {/* Message Area - Clean Slate */}

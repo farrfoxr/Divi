@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
 import { createRoot, cleanupNode } from '@/lib/knowledge-graph';
-import { Root, Node } from '@/types';
 
 type Tab = 'library' | 'navigator' | 'backpack';
 
@@ -12,9 +11,16 @@ interface SidebarProps {
   activeNodeId: string | null;
   setActiveRootId: (id: string) => void;
   setActiveNodeId: (id: string) => void;
+  onResetDB: () => void;
 }
 
-export default function Sidebar({ activeRootId, activeNodeId, setActiveRootId, setActiveNodeId }: SidebarProps) {
+export default function Sidebar({ 
+  activeRootId, 
+  activeNodeId, 
+  setActiveRootId, 
+  setActiveNodeId,
+  onResetDB 
+}: SidebarProps) {
   const [currentTab, setCurrentTab] = useState<Tab>('library');
   
   // Switch to Navigator automatically when a root is active
@@ -45,6 +51,32 @@ export default function Sidebar({ activeRootId, activeNodeId, setActiveRootId, s
         {currentTab === 'backpack' && activeRootId && (
           <BackpackTab activeRootId={activeRootId} />
         )}
+      </div>
+
+      {/* Task 1: Sticky Footer & Actions */}
+      <div className="mt-auto border-t border-[var(--border-subtle)] p-4">
+        <div className="flex flex-col gap-2">
+          <button className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm text-[var(--text-secondary)] hover:bg-black/5 hover:text-[var(--text-primary)] transition-colors">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M5 5L12 12"></path>
+              <path d="M19 5L12 12"></path>
+              <path d="M5 19L12 12"></path>
+              <path d="M19 19L12 12"></path>
+            </svg>
+            View Full Graph
+          </button>
+          <button 
+            onClick={onResetDB}
+            className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm text-[var(--text-secondary)] hover:bg-red-50 hover:text-red-600 transition-colors"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            Settings / Reset
+          </button>
+        </div>
       </div>
     </aside>
   );
@@ -101,13 +133,7 @@ function NavigatorTab({ activeNodeId, onNavigate }: { activeNodeId: string, onNa
   const currentNode = useLiveQuery(() => db.nodes.get(activeNodeId), [activeNodeId]);
   
   const siblings = useLiveQuery(async () => {
-    if (!currentNode) return [];
-
-    // FIX: Check if parentId exists. If it is null (Start Node), do NOT query the DB.
-    if (!currentNode.parentId) {
-      return []; 
-    }
-
+    if (!currentNode || !currentNode.parentId) return [];
     return db.nodes.where('parentId').equals(currentNode.parentId).toArray();
   }, [currentNode]);
   
@@ -126,6 +152,12 @@ function NavigatorTab({ activeNodeId, onNavigate }: { activeNodeId: string, onNa
 
   return (
     <div className="space-y-6">
+      {/* Task 4: Depth Indicator Moved Here */}
+      <div className="flex items-center justify-between text-xs font-medium text-[var(--accent)] opacity-80">
+         <span>Current Level</span>
+         <span className="rounded-full bg-[var(--border-subtle)] px-2 py-0.5 text-[var(--text-primary)]">Depth: {currentNode.depth}</span>
+      </div>
+
       {/* Go Up Section */}
       <div>
         <button 

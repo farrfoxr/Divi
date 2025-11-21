@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
 import Sidebar from './Sidebar';
 import MainCanvas from './MainCanvas';
@@ -29,6 +28,14 @@ export default function AppShell() {
     }
   }, [activeNodeId, activeRootId]);
 
+  // Task 2: Debug Nuke Logic
+  const handleResetDB = async () => {
+    if (window.confirm("⚠️ WARNING: This will wipe all data and reset the app. Are you sure?")) {
+      await db.delete();
+      window.location.reload();
+    }
+  };
+
   return (
     <div className="flex h-screen w-full overflow-hidden bg-[var(--bg-app)]">
       <Sidebar 
@@ -36,6 +43,7 @@ export default function AppShell() {
         activeNodeId={activeNodeId}
         setActiveRootId={setActiveRootId}
         setActiveNodeId={setActiveNodeId}
+        onResetDB={handleResetDB}
       />
       <MainCanvas 
         activeRootId={activeRootId}
